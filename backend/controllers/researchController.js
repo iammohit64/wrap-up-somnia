@@ -22,7 +22,6 @@ const getUserDisplayName = async (walletAddress) => {
 // ---------------------------------------------------------------------------
 // POST /api/research/initiate
 // PHASE 1: Run multi-source search and return a preview without persisting.
-// If a recent report already exists for the topic, return it from cache.
 // ---------------------------------------------------------------------------
 export const initiateResearch = async (req, res, next) => {
   try {
@@ -34,7 +33,6 @@ export const initiateResearch = async (req, res, next) => {
 
     console.log(`🔬 Initiating research: "${topic}"`);
 
-    // 24-hour cache check.
     const cached = await prisma.research.findFirst({
       where: {
         topic: topic.trim(),
@@ -80,19 +78,44 @@ export const initiateResearch = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // POST /api/research/generate
-// PHASE 2: Full pipeline — search → analyze → synthesize → persist to DB.
-// Returns the complete report + researchId for subsequent IPFS/chain steps.
+// PHASE 2: Multiplexed endpoint.
+// If action === 'prepare', saves the report JSON to the DB.
+// Otherwise, runs the AI synthesis and returns a preview WITHOUT saving to DB.
 // ---------------------------------------------------------------------------
 export const generateResearchReport = async (req, res, next) => {
   try {
-    const { topic, userContext } = req.body;
+    const { topic, userContext, action, reportData } = req.body;
 
+    // Save to Database Stage (equivalent to Legacy prepare)
+    if (action === 'prepare') {
+      if (!reportData) return res.status(400).json({ error: 'reportData is required for prepare action' });
+      
+      console.log(`💾 Saving research to database for: "${reportData.topic}"`);
+      const savedResearch = await prisma.research.create({
+        data: {
+          topic: reportData.topic.trim(),
+          executiveSummary: reportData.executiveSummary,
+          keyInsights: reportData.keyInsights,
+          sources: reportData.sources,
+          comparativeAnalysis: reportData.comparativeAnalysis,
+          consensusVsContradiction: reportData.consensusVsContradiction,
+          visualizationData: reportData.visualizationData,
+          sourceComparisonReport: reportData.sourceComparisonReport || null,
+          metadata: reportData.metadata,
+          onChain: false,
+          upvotedBy: [],
+        },
+      });
+      console.log(`✅ Research saved: ${savedResearch.id}`);
+      return res.json({ researchId: savedResearch.id, report: savedResearch });
+    }
+
+    // AI Generation Stage (equivalent to Legacy scrape preview)
     if (!topic) {
       return res.status(400).json({ error: 'topic is required' });
     }
 
-    console.log(`📊 Generating full report for: "${topic}"`);
-
+    console.log(`📊 Generating preview report for: "${topic}"`);
     const sources = await conductMultiSourceResearch(topic, userContext);
 
     if (sources.length === 0) {
@@ -105,8 +128,9 @@ export const generateResearchReport = async (req, res, next) => {
     console.log(`📝 Synthesizing from ${sources.length} sources...`);
     const report = await synthesizeResearchReport(topic, sources);
 
-    const savedResearch = await prisma.research.create({
-      data: {
+    res.json({
+      previewOnly: true,
+      report: {
         topic: topic.trim(),
         executiveSummary: report.executiveSummary,
         keyInsights: report.keyInsights,
@@ -120,29 +144,6 @@ export const generateResearchReport = async (req, res, next) => {
           platforms: [...new Set(sources.map((s) => s.platform))],
           generatedAt: new Date().toISOString(),
         },
-        onChain: false,
-        upvotedBy: [],
-      },
-    });
-
-    console.log(`✅ Research saved: ${savedResearch.id}`);
-
-    res.json({
-      researchId: savedResearch.id,
-      report: {
-        id: savedResearch.id,
-        topic: savedResearch.topic,
-        executiveSummary: savedResearch.executiveSummary,
-        keyInsights: savedResearch.keyInsights,
-        sources: savedResearch.sources,
-        comparativeAnalysis: savedResearch.comparativeAnalysis,
-        consensusVsContradiction: savedResearch.consensusVsContradiction,
-        visualizationData: savedResearch.visualizationData,
-        sourceComparisonReport: savedResearch.sourceComparisonReport,
-        metadata: savedResearch.metadata,
-        onChain: savedResearch.onChain,
-        upvotes: savedResearch.upvotes,
-        createdAt: savedResearch.createdAt,
       },
     });
   } catch (error) {
@@ -153,7 +154,7 @@ export const generateResearchReport = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // POST /api/research/upload-ipfs
-// Pin the research report to IPFS. Returns the hash for the blockchain call.
+// Pin the research report to IPFS.
 // ---------------------------------------------------------------------------
 export const uploadResearchToIPFS = async (req, res, next) => {
   try {
@@ -183,7 +184,6 @@ export const uploadResearchToIPFS = async (req, res, next) => {
     const ipfsHash = await uploadToIPFS(ipfsData);
     console.log(`✅ Research IPFS hash: ${ipfsHash}`);
 
-    // Store the hash so the mark-onchain step has it.
     await prisma.research.update({
       where: { id: researchId },
       data: { ipfsHash },
@@ -198,7 +198,6 @@ export const uploadResearchToIPFS = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // POST /api/research/mark-onchain
-// Called AFTER the blockchain tx confirms. Updates DB to onChain: true.
 // ---------------------------------------------------------------------------
 export const markResearchOnChain = async (req, res, next) => {
   try {
@@ -233,7 +232,6 @@ export const markResearchOnChain = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // GET /api/research/:id
-// Single research report with nested comments.
 // ---------------------------------------------------------------------------
 export const getResearchById = async (req, res, next) => {
   try {
@@ -267,7 +265,6 @@ export const getResearchById = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // GET /api/research
-// Paginated list. On-chain only by default; pass ?includeOffChain=true for all.
 // ---------------------------------------------------------------------------
 export const getAllResearch = async (req, res, next) => {
   try {
@@ -315,7 +312,6 @@ export const getAllResearch = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // POST /api/research/upvote
-// DB-level upvote (wallet-optional).
 // ---------------------------------------------------------------------------
 export const upvoteResearch = async (req, res, next) => {
   try {
@@ -354,7 +350,6 @@ export const upvoteResearch = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // POST /api/research/sync-upvotes
-// Overwrite DB upvote count with authoritative on-chain value.
 // ---------------------------------------------------------------------------
 export const syncResearchUpvotes = async (req, res, next) => {
   try {
@@ -379,7 +374,7 @@ export const syncResearchUpvotes = async (req, res, next) => {
 
 // ---------------------------------------------------------------------------
 // DELETE /api/research/:id
-// Remove a DB record. Blocked if the report is already on-chain.
+// Remove a DB record on Tx fail.
 // ---------------------------------------------------------------------------
 export const deleteResearch = async (req, res, next) => {
   try {
