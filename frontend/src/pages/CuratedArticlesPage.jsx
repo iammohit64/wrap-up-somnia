@@ -7,7 +7,7 @@ import { Button, Card, Badge } from "../components/ui";
 import BlockchainBackground from "../components/ui/BlockchainBackground";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { BookOpen, ThumbsUp, MessageSquare, Inbox, Hexagon, FileText, TrendingUp, Plus } from "lucide-react";
+import { BookOpen, ThumbsUp, MessageSquare, Inbox, Hexagon, FileText, TrendingUp, Plus, AlertCircle } from "lucide-react";
 
 const API_BASE = '/api';
 
@@ -26,9 +26,17 @@ export default function CuratedArticlesPage() {
       setLoading(true);
       setError(null);
       const response = await axios.get(`${API_BASE}/articles/all`);
-      setArticles(response.data || []);
+
+      // Defensive: handle various possible response shapes
+      const data = response.data;
+      const items = Array.isArray(data)
+        ? data
+        : data?.articles ?? data?.results ?? data?.data ?? [];
+
+      setArticles(items);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to load articles');
+      setArticles([]);
     } finally {
       setLoading(false);
     }
@@ -80,7 +88,9 @@ export default function CuratedArticlesPage() {
                   <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Articles</span>
                 </div>
                 <div className="flex flex-col items-center px-4">
-                  <span className="text-3xl font-black text-emerald-400 mb-1">{articles.reduce((a, b) => a + (b.upvotes || 0), 0)}</span>
+                  <span className="text-3xl font-black text-emerald-400 mb-1">
+                    {articles.reduce((a, b) => a + (b.upvotes || 0), 0)}
+                  </span>
                   <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Total Votes</span>
                 </div>
               </div>
