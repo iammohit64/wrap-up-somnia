@@ -18,6 +18,7 @@ app.use(
       'https://wrap-up-one.vercel.app',
       'http://localhost:5173',
       'https://wrap-up-evolved.vercel.app',
+      'https://wrap-up-somnia.vercel.app',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
