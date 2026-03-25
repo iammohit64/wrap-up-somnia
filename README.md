@@ -2,7 +2,7 @@
 **A Decentralized Web3 AI Research & News Curation Platform, Powered by Somnia Reactivity**
 
 [![Live Demo](https://img.shields.io/badge/Live%20App-wrap--up--somnia.vercel.app-10b981?style=for-the-badge&logo=vercel)](https://wrap-up-somnia.vercel.app/)
-[![Demo Video](https://img.shields.io/badge/Watch-Demo%20Video-FF0000?style=for-the-badge&logo=youtube)](https://canva.link/l81k8kuq5uwrqgf)
+[![Demo Video](https://img.shields.io/badge/Watch-Demo%20Video-FF0000?style=for-the-badge&logo=youtube)](https://canva.link/0l7o8xk4xkcwwp6)
 [![Somnia](https://img.shields.io/badge/Chain-Somnia%20Testnet-6366f1?style=for-the-badge)](https://somnia.network)
 [![Hackathon](https://img.shields.io/badge/Hackathon-Somnia%20Reactivity%20Mini-f59e0b?style=for-the-badge)](https://dorahacks.io/hackathon/somnia-reactivity/detail)
 [![Repo](https://img.shields.io/badge/GitHub-wrap--up--somnia-181717?style=for-the-badge&logo=github)](https://github.com/iammohit64/wrap-up-somnia.git)
