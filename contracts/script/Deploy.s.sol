@@ -1,37 +1,34 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
 import "../src/WrapUp.sol";
 import "../src/WUPToken.sol";
-import "../src/WUPClaimer.sol";
+import "../src/ReactiveAutoClaimer.sol";
 
 contract Deploy is Script {
     function run() external {
-        // By default, this uses Anvil's Account #0 private key for local testing
-        // For real testnets, you will pass your actual private key in the .env file
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        address deployer = vm.addr(deployerPrivateKey);
+        vm.startBroadcast();
 
-        vm.startBroadcast(deployerPrivateKey);
+        // EXPLICITLY set your actual wallet address here instead of msg.sender.
+        // This guarantees your 0x4f5B... wallet is the owner of the token.
+        address deployer = 0x4f5B0d937445d63346080FA209bA26C26366142B;
 
-        // 1. Deploy WrapUp (The main social/research contract)
+        // 1. Deploy WrapUp
         WrapUp wrapUp = new WrapUp();
         console.log("WrapUp deployed to:", address(wrapUp));
 
-        // 2. Deploy WUPToken (The ERC20 Token)
+        // 2. Deploy WUPToken (Assigns ownership to your specific wallet)
         WUPToken wupToken = new WUPToken(deployer);
         console.log("WUPToken deployed to:", address(wupToken));
 
-        // 3. Deploy WUPClaimer (Needs both previous addresses to link them)
-        WUPClaimer claimer = new WUPClaimer(address(wrapUp), address(wupToken));
-        console.log("WUPClaimer deployed to:", address(claimer));
+        // 3. Deploy ReactiveAutoClaimer 
+        ReactiveAutoClaimer claimer = new ReactiveAutoClaimer(address(wrapUp), address(wupToken), deployer);
+        console.log("ReactiveAutoClaimer deployed to:", address(claimer));
 
-        // 4. Mint 1 Million WUP tokens directly to the Claimer contract
-        // so that it has funds to pay out to users who claim their points!
-        uint256 amountToMint = 1_000_000 * (10**18);
-        wupToken.mint(address(claimer), amountToMint);
-        console.log("Minted 1,000,000 WUP to the Claimer Contract");
+        // 4. Authorize the Auto-Claimer to mint tokens
+        wupToken.setReactiveClaimer(address(claimer));
+        console.log("Authorized ReactiveAutoClaimer to mint WUP tokens automatically");
 
         vm.stopBroadcast();
     }

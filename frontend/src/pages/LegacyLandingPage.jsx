@@ -22,7 +22,7 @@ import {
   CheckCircle, Circle, Loader
 } from "lucide-react";
 
-const API_BASE = "https://wrap-up-evolved.onrender.com/api";
+const API_BASE = 'http://localhost:5001/api'; 
 
 export default function LegacyLandingPage() {
   const [url, setUrl] = useState("");
@@ -41,7 +41,7 @@ export default function LegacyLandingPage() {
   const { switchChain } = useSwitchChain();
   const { markArticleOnChainDB, deleteArticleFromDB } = useArticleStore();
 
-  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[421614];
+  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[50312];
 
   const { data: hash, isPending, writeContract, error: writeError } = useWriteContract();
   const {
@@ -111,7 +111,7 @@ export default function LegacyLandingPage() {
       setStepIndex(2);
       const doWrite = () => writeContract({ address: currentContractAddress, abi: WRAPUP_ABI, functionName: "submitArticle", args: [generatedHash] });
       
-      if (!CONTRACT_ADDRESSES[chainId]) switchChain({ chainId: 421614 }, { onSuccess: doWrite, onError: () => { toast.error("Network switch failed"); setLoading(false); } });
+      if (!CONTRACT_ADDRESSES[chainId]) switchChain({ chainId: 50312 }, { onSuccess: doWrite, onError: () => { toast.error("Network switch failed"); setLoading(false); } });
       else doWrite();
 
     } catch (err) {

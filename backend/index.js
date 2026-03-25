@@ -8,6 +8,7 @@ import leaderboardRoutes from './routes/leaderboardRoutes.js';
 import researchRoutes from './routes/researchRoutes.js';
 import comparisonRoutes from './routes/comparisonRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
+import { startReactivityListener } from './somniaReactivity.js';
 
 const app = express();
 
@@ -52,4 +53,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Wrap-Up Backend v2.1 running on port ${PORT}`);
   console.log(`🔬 AI Research Engine: ENABLED`);
   console.log(`⚖️  Article Comparator: ENABLED`);
+  startReactivityListener(); 
 });

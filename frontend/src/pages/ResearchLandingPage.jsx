@@ -21,7 +21,7 @@ import {
   Globe, Zap, X, ArrowRight, CheckCircle, Circle, Loader, Scale, Link2
 } from "lucide-react";
 
-const API_BASE = 'https://wrap-up-evolved.onrender.com/api';
+const API_BASE = 'http://localhost:5001/api'; 
 
 export default function ResearchLandingPage() {
   const [topic, setTopic] = useState("");
@@ -39,7 +39,7 @@ export default function ResearchLandingPage() {
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
 
-  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[421614];
+  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[50312];
 
   const { data: hash, isPending, writeContract, error: writeError } = useWriteContract();
   const {
@@ -133,7 +133,7 @@ export default function ResearchLandingPage() {
       };
 
       if (!CONTRACT_ADDRESSES[chainId]) {
-        switchChain({ chainId: 421614 }, { onSuccess: doWrite, onError: () => { toast.error("Network switch failed"); setLoading(false); setStepIndex(-1); } });
+        switchChain({ chainId: 50312 }, { onSuccess: doWrite, onError: () => { toast.error("Network switch failed"); setLoading(false); setStepIndex(-1); } });
       } else {
         doWrite();
       }

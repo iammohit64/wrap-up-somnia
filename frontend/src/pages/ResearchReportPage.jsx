@@ -25,7 +25,7 @@ import {
   FileText, ThumbsUp, Hexagon, Link2, Loader, Circle, ArrowLeft
 } from "lucide-react";
 
-const API_BASE = "https://wrap-up-evolved.onrender.com/api";
+const API_BASE = 'http://localhost:5001/api'; 
 
 const SENTIMENT_COLORS = {
   Positive: "#10b981",
@@ -92,7 +92,7 @@ export default function ResearchReportPage() {
   const { switchChain } = useSwitchChain();
 
   const currentContractAddress =
-    CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[421614];
+    CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[50312];
 
   const {
     loadResearch,
@@ -173,9 +173,9 @@ export default function ResearchReportPage() {
     if (!CONTRACT_ADDRESSES[chainId]) {
       toast.loading("Switching to supported network...", { id: toastId });
       switchChain(
-        { chainId: 421614 },
+        { chainId: 50312 },
         {
-          onSuccess: () => writeFn({ ...config, address: CONTRACT_ADDRESSES[421614] }),
+          onSuccess: () => writeFn({ ...config, address: CONTRACT_ADDRESSES[50312] }),
           onError: () => toast.error("Network switch failed", { id: toastId }),
         }
       );

@@ -5,25 +5,26 @@ import { arbitrumSepolia, baseSepolia, foundry } from 'wagmi/chains';
 
 const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID;
 
-// 2. Put all supported chains in an array
-const creditcoinTestnet = {
-  id: 102031,
-  name: 'Creditcoin Testnet',
-  network: 'Creditcoin Testnet',
+// Define Somnia Testnet
+const somniaTestnet = {
+  id: 50312,
+  name: 'Somnia Testnet',
+  network: 'somnia-testnet',
   nativeCurrency: {
     decimals: 18,
-    name: 'tCTC',
-    symbol: 'tCTC',
+    name: 'STT',
+    symbol: 'STT',
   },
   rpcUrls: {
-    public: { http: ['https://rpc.cc3-testnet.creditcoin.network'] },
-    default: { http: ['https://rpc.cc3-testnet.creditcoin.network'] },
+    public: { http: ['https://dream-rpc.somnia.network'], webSocket: ['wss://dream-rpc.somnia.network/ws'] },
+    default: { http: ['https://dream-rpc.somnia.network'], webSocket: ['wss://dream-rpc.somnia.network/ws'] },
   },
   blockExplorers: {
-    default: { name: 'Blockscout', url: 'https://creditcoin-testnet.blockscout.com' },
+    default: { name: 'Shannon Explorer', url: 'https://shannon-explorer.somnia.network' },
   },
 };
-const chains = [arbitrumSepolia, baseSepolia, foundry, creditcoinTestnet];
+
+const chains = [arbitrumSepolia, baseSepolia, foundry, somniaTestnet];
 
 
 const metadata = {
@@ -43,7 +44,7 @@ createWeb3Modal({
   wagmiConfig,
   projectId,
   // This just sets the initial UI view, it does NOT lock the app
-  defaultChain: creditcoinTestnet, 
+  defaultChain: somniaTestnet, 
   themeMode: 'dark',
 });
 
@@ -53,6 +54,7 @@ export const CONTRACT_ADDRESSES = {
   84532: import.meta.env.VITE_BASE_WRAPUP,            // Base Sepolia
   421614: import.meta.env.VITE_ARB_WRAPUP,            // Arbitrum Sepolia
   102031: "0x1e9f2F91E0673E3313C68b49a2262814C7d8921e", // <-- Add Creditcoin Address
+  50312: "0xd51BE7C7DE763eA4355D7092e8B9ab3401DC6124", // <-- Add Somnia Testnet Address
 };
 
 export const WUPToken_ADDRESSES = {
@@ -60,6 +62,7 @@ export const WUPToken_ADDRESSES = {
   84532: import.meta.env.VITE_BASE_TOKEN,
   421614: import.meta.env.VITE_ARB_TOKEN,
   102031: "0xA5123b6D0e67b634DA8DC118DE99F72f24B6A33a", // <-- Add Creditcoin Address
+  50312: "0x9Efc86871f6100f87d4aA5f1f38F7d6721034259", // <-- Add Somnia Testnet Address
 };
 
 export const WUPClaimer_ADDRESSES = {
@@ -67,6 +70,7 @@ export const WUPClaimer_ADDRESSES = {
   84532: import.meta.env.VITE_BASE_CLAIMER,
   421614: import.meta.env.VITE_ARB_CLAIMER,
   102031: "0x0b8Fe0D4e677E6a99b2B47b2F34A0e0D85240C24", // <-- Add Creditcoin Address
+  50312: "0x5D03F14c26AE3857bb0A84418Cbdb2225636E9b2", // <-- Add Somnia Testnet Address
 };
 
 // 4. Paste your newly extracted ABIs here

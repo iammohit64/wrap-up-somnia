@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useArticleStore } from "../stores/articleStore";
 
-const API_BASE = "https://wrap-up-evolved.onrender.com/api";
+const API_BASE = 'http://localhost:5001/api'; 
 
 const DIMENSION_META = {
   credibility:    { label: "Credibility",    icon: Shield,      color: "#10b981" },
@@ -96,7 +96,7 @@ export default function ComparatorPage() {
   const { switchChain } = useSwitchChain();
   const { deleteComparisonFromDB } = useArticleStore();
 
-  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[421614];
+  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[50312];
 
   const {
     data: publishHash,
@@ -175,7 +175,7 @@ export default function ComparatorPage() {
 
       if (!CONTRACT_ADDRESSES[chainId]) {
         switchChain(
-          { chainId: 421614 },
+          { chainId: 50312 },
           {
             onSuccess: doWrite,
             onError: () => {

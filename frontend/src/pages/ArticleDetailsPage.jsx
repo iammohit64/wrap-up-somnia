@@ -38,7 +38,7 @@ export default function ArticleDetailPage() {
   const { address, isConnected } = useAccount();
   const chainId = useChainId(); 
 
-  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[421614];
+  const currentContractAddress = CONTRACT_ADDRESSES[chainId] || CONTRACT_ADDRESSES[50312];
   const { switchChain } = useSwitchChain();
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function ArticleDetailPage() {
 
     if (!isSupportedChain) {
       toast.loading("Switching to a supported network...", { id: toastId });
-      switchChain({ chainId: 421614 }, {
+      switchChain({ chainId: 50312 }, {
         onSuccess: () => {
           toast.loading('Please confirm in wallet...', { id: toastId });
           writeFn(config);
