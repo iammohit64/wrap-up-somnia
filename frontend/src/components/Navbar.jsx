@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { Menu, X, Star, Award, Check, Brain, FileText, LogOut, Wallet, Link2, Scale, Hexagon, ChevronDown, Zap } from "lucide-react";
 
-const API_BASE = 'http://localhost:5001/api'; 
+const API_BASE = 'https://wrap-up-somnia.onrender.com/api'; 
 
 export default function Navbar() {
   const { userPoints, displayName, setUserPoints, setDisplayName } = useArticleStore();
