@@ -22,7 +22,7 @@ import {
   CheckCircle, Circle, Loader
 } from "lucide-react";
 
-const API_BASE = 'http://localhost:5001/api'; 
+const API_BASE = 'https://wrap-up-somnia.onrender.com/api'; 
 
 export default function LegacyLandingPage() {
   const [url, setUrl] = useState("");
