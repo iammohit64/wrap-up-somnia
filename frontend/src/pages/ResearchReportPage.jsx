@@ -25,7 +25,7 @@ import {
   FileText, ThumbsUp, Hexagon, Link2, Loader, Circle, ArrowLeft
 } from "lucide-react";
 
-const API_BASE = 'http://localhost:5001/api'; 
+const API_BASE = 'https://wrap-up-somnia.onrender.com/api'; 
 
 const SENTIMENT_COLORS = {
   Positive: "#10b981",
