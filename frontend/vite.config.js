@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://wrap-up-evolved.onrender.com', // Your backend URL
+        target: 'https://wrap-up-somnia.onrender.com', // Your backend URL
         changeOrigin: true,
         secure: false,
       },
